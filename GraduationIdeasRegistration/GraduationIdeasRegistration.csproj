@@ -178,6 +178,10 @@
     <Compile Include="Migrations\202006250025001_addColoumnTeamNameToTeam.Designer.cs">
       <DependentUpon>202006250025001_addColoumnTeamNameToTeam.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202006262110456_changeColNameInIdeaProfTable.cs" />
+    <Compile Include="Migrations\202006262110456_changeColNameInIdeaProfTable.Designer.cs">
+      <DependentUpon>202006262110456_changeColNameInIdeaProfTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Department.cs" />
     <Compile Include="Models\ProfIdeas.cs" />
@@ -274,6 +278,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202006250025001_addColoumnTeamNameToTeam.resx">
       <DependentUpon>202006250025001_addColoumnTeamNameToTeam.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006262110456_changeColNameInIdeaProfTable.resx">
+      <DependentUpon>202006262110456_changeColNameInIdeaProfTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

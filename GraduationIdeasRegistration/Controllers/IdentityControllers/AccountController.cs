@@ -413,6 +413,7 @@ namespace GraduationIdeasRegistration.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
+            Session["UserID"] = null;
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Home");
         }

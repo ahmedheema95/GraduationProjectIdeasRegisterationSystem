@@ -109,3 +109,4 @@ C:\Users\a_hem\Desktop\GraduationIdeasRegistration\GraduationIdeasRegistration\o
 C:\Users\a_hem\Desktop\GraduationIdeasRegistration\GraduationIdeasRegistration\obj\Debug\GraduationIdeasRegistration.Migrations.InitialMigration1.resources
 C:\Users\a_hem\Desktop\GraduationIdeasRegistration\GraduationIdeasRegistration\obj\Debug\GraduationIdeasRegistration.csproj.GenerateResource.cache
 C:\Users\a_hem\Desktop\GraduationIdeasRegistration\GraduationIdeasRegistration\obj\Debug\GraduationIdeasRegistration.Migrations.addColoumnTeamNameToTeam.resources
+C:\Users\a_hem\Desktop\GraduationIdeasRegistration\GraduationIdeasRegistration\obj\Debug\GraduationIdeasRegistration.Migrations.changeColNameInIdeaProfTable.resources

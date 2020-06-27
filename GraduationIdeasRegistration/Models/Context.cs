@@ -43,7 +43,7 @@ namespace GraduationIdeasRegistration.Models
                 {
                     m.ToTable("IdeasWithRegisteredProfessors");
                     m.MapLeftKey("ProfID");
-                    m.MapRightKey("StudID");
+                    m.MapRightKey("IdeaID");
                 });
 
             modelBuilder.Entity<StudentIdea>()
