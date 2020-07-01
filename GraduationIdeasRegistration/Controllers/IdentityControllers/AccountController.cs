@@ -169,7 +169,7 @@ namespace GraduationIdeasRegistration.Controllers
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
-                    await UserManager.AddToRoleAsync(user.Id, "Admin");
+                    //await UserManager.AddToRoleAsync(user.Id, "Admin");
 
                     var Team = new Team
                     {

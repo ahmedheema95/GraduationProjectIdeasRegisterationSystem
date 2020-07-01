@@ -74,21 +74,39 @@ namespace GraduationIdeasRegistration.Controllers
         public ActionResult RegisterIdea()
         {
             string sessionID = Session["UserID"].ToString();
+            ViewBag.TeamID = sessionID;
             var ideaExists = DB.Ideas.FirstOrDefault(s => s.TeamID == sessionID);
-            if (ideaExists != null)
+            if (ideaExists == null)
             {
-                ViewBag.Departments = new SelectList(DB.Departments.ToList(), "DeptID", "DeptName");
+                ViewBag.DeptID = new SelectList(DB.Departments.ToList(), "DeptID", "DeptName");
                 ViewBag.addIdea = true;
             }
             else
+            {
+                ViewBag.existingIdea = DB.Ideas.Include(s => s.Professors).FirstOrDefault();
                 ViewBag.addIdea = false;
+            }
+                
             return View();
         }
 
         [HttpPost]
-        public JsonResult RegisterIdea(StudentIdea idea)
+        public JsonResult RegisterIdea(TempIdea idea)
         {
-            DB.Ideas.Add(idea);
+            var Professors = new List<Professor>();
+            foreach (var profID in idea.Professors)
+            {
+                Professors.Add(DB.Professors.FirstOrDefault(s => s.ProfID == profID));
+            }
+            StudentIdea I = new StudentIdea
+            {
+                IdeaName = idea.IdeaName,
+                IdeaDescription = idea.IdeaDescription,
+                TeamID = idea.TeamID,
+                Professors = Professors,
+                IdeaState = IdeaState.Pending
+            };
+            DB.Ideas.Add(I);
             DB.SaveChanges();
             return Json("Success", JsonRequestBehavior.AllowGet);
         }
@@ -102,12 +120,13 @@ namespace GraduationIdeasRegistration.Controllers
             return Json(result,JsonRequestBehavior.AllowGet);
         }
 
-        [HttpGet]
-        public void DropIdea(int ideaID)
+        [HttpPost]
+        public JsonResult DropIdea(int ideaID)
         {
             var idea = DB.Ideas.Find(ideaID);
             DB.Ideas.Remove(idea);
             DB.SaveChanges();
+            return Json("Success", JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]

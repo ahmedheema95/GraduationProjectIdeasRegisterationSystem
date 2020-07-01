@@ -1,0 +1,222 @@
+﻿
+@{
+    ViewBag.Title = "RegisterIdea";
+}
+
+
+
+@if (@ViewBag.addIdea)
+{
+    <div class="mt-4 offset-1 bodyContainer">
+
+        <h3>Add New Idea</h3>
+
+        <form>
+            <input value="@ViewBag.TeamID" id="teamID" hidden />
+
+            <div class="form-group">
+                <label> Idea Name </label>
+                <input type="text" class="form-control col-5" placeholder="Enter Idea Name" id="ideaName" />
+            </div>
+            <div class="form-group">
+                <label>Description </label>
+                <textarea class="form-control col-9" placeholder="Enter Idea Name" rows="4" id="ideaDescription"> </textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Department</label>
+                @Html.DropDownList("DeptID", ViewBag.Departments as SelectList, new { @class = "form-control col-2 deptID" })
+            </div>
+            <div class="form-group profList">
+                <label>Professor (You Can Choose Up To 3)</label>
+                <button class="ml-2 border-0 rounded-circle" id="btnProf" type="button">
+                    <img src="~/Content/plus.svg" width="12" />
+                </button>
+                <select class="form-control" id="1">
+                </select>
+
+            </div>
+            <button type="button" class="btn btn-primary" id="btnAdd">Submit</button>
+        </form>
+
+
+    </div>
+
+}
+else
+{
+    <div class="mt-4 offset-1 bodyContainer">
+
+
+        <div class="row">
+            <h3 class="text-info col-6">You Have Pending Idea</h3>
+            <button class="btn btn-danger offset-3" id="btnideaDrop">Drop</button>
+        </div>
+        
+
+        <span class="d-none"> @ViewBag.existingIdea.IdeaID</span>
+
+
+        <div class="form-group">
+            <label> Idea Name </label>
+            <input type="text" class="form-control col-5" value="@ViewBag.existingIdea.IdeaName" disabled />
+        </div>
+        <div class="form-group">
+            <label>Description </label>
+            <textarea class="form-control col-9" rows="4" id="ideaDescription" disabled>@ViewBag.existingIdea.IdeaDescription
+            </textarea>
+        </div>
+
+        <div class="form-group profList">
+            <label>Selected Professors</label>
+            <ul>
+                @foreach (var item in ViewBag.existingIdea.Professors)
+                {
+                    <li>@item.ProfName</li>
+                }
+            </ul>
+        </div>
+
+
+
+    </div>
+
+
+    
+}
+
+
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script>
+    $('document').ready(function () {
+
+        let btnCount = 1;
+
+        let profCountDept = 0;
+
+        populateProfList(1);
+        function populateProfList(option) {
+            let deptID = $('.deptID').val();
+            //console.log(deptID);
+            if(deptID)
+                $.ajax({
+                    url: `/Home/DepartmentProfessors?deptID=${deptID}`,
+                    method: "GET",
+                    dataType: "JSON",
+                    success: (response) => {
+                        profCountDept = 0;
+                        $(`#${option}`).empty();
+                        response.forEach((item) => {
+                            profCountDept++;
+                            //console.log(`Option :: ${option}`);
+                            $(`#${option}`).append(`<option value=${item.ProfID}>${item.ProfName}</option>`);
+                        });
+                        if (profCountDept < ($('.profList').children('select').length + 1))
+                            $('#btnProf').attr("disabled", true);
+                        else
+                            $('#btnProf').removeAttr("disabled");
+                    },
+                    error: () => console.log("Error!!!")
+                });
+            };
+
+        $('.deptID').on("change", () => {
+            let i = $('.profList').children('select').length;
+            //console.log(`SelectLength ${i}`);
+            for (let j = i-1; j > 0; j--) {
+                //console.log(`i ${i} :: j ${j}`);
+                $('.profList').children('select')[j].remove();
+                $('.profList').children('button')[j].remove();
+                $('.profList').children('br').remove();
+            }
+            profCountDept = 0;
+            $('#btnProf').css("display", "inline");
+            populateProfList($('.profList').children('select')[0].id);
+
+        });
+
+        $('#btnAdd').on("click", function() {
+            let that = $(this).closest('.bodyContainer');
+            //console.log(that);
+            let Professors = [];
+            Array.from($('.profList').children('select')).forEach(item => {
+                //console.log($(`#Prof${item.id[4]} :selected`).val());
+                Professors.push($(`#Prof${item.id[4]} :selected`).val());
+            });
+
+            let itemObj = {
+                IdeaName: $('#ideaName').val(),
+                IdeaDescription: $('#ideaDescription').val(),
+                TeamID: $("#teamID").val(),
+                Professors: Professors
+            };
+
+            console.log(itemObj);
+            $.ajax({
+                url: "/Home/RegisterIdea",
+                method: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(itemObj),
+                success: (response) => {
+                    console.log(response);
+                    that.fadeOut();
+                    setTimeout(() => {
+                        that.empty();
+                        that.css("display", "inline").append(`<h3 class="offset-2 mt-3 text-success">Idea Added Successfully !!!</h3>`);
+                    }, 500);
+                },
+                error: () => console.log("Error!!!")
+            });
+        });
+
+        $('#btnProf').on("click", () => {
+            let i = $('.profList').children('select').length + 1;
+            //console.log(`profCountDept :: ${profCountDept}`);
+            btnCount++;
+            $('.profList').append(`<select class="mt-3 form-control d-inline" id="${btnCount}"></select>
+                <button class="ml-2 border-0 rounded-circle btnremoveProf" data-id=${btnCount} type="button">
+                    <img src="/Content/minus.svg" width="12" />
+                </button>
+                <br data-id="${btnCount}"/>
+            `);
+            //console.log(`i=${i}`);
+            populateProfList(btnCount);
+            if (i == 3)
+                $('#btnProf').css("display","none");
+        });
+
+        $('.profList').on("click", "button.btnremoveProf", function () {
+            //console.log($(this).attr('data-id'));
+            let btnID = $(this).attr('data-id');
+            $('.profList').find(`#${btnID}`).remove();
+            $('.profList').find(`[data-id=${btnID}]`).remove();
+            $('#btnProf').removeAttr("disabled");
+            $('#btnProf').css("display", "inline");
+        });
+
+
+        $('#btnideaDrop').on("click", function () {
+            //console.log($(this));
+            let that = $(this).closest('.bodyContainer');
+            //console.log(that.children('span').text());
+            let ideaID = that.children('span').text();
+
+            $.ajax({
+                url: `/Home/DropIdea?ideaID=${ideaID}`,
+                method: "POST",
+                dataType: "JSON",
+                success: (response) => {
+                    console.log(response);
+                    that.fadeOut();
+                    setTimeout(() => {
+                        that.empty();
+                        that.css("display", "inline").append(`<h3 class="offset-2 mt-3 text-success">Idea Removed Successfully !!!</h3>`);
+                    }, 500);
+                },
+                error: () => console.log("Error !!!")
+            });
+           
+        });
+
+    });
+</script>

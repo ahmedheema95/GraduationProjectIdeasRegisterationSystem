@@ -30,4 +30,14 @@ namespace GraduationIdeasRegistration.Models
         public List<Professor> Professors { get; set; }
         public Team Team { get; set; }
     }
+
+    public class TempIdea
+    {
+        public string TeamID { get; set; }
+        public string IdeaName { get; set; }
+        public string IdeaDescription { get; set; }
+        public string[] Professors { get; set; }
+
+    }
+
 }
