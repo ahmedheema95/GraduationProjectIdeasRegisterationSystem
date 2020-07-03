@@ -111,13 +111,27 @@ namespace GraduationIdeasRegistration.Controllers
             return Json("Success", JsonRequestBehavior.AllowGet);
         }
 
+        //[HttpGet]
+        //public JsonResult DepartmentProfessors(int deptID)
+        //{
+        //    var result = DB.Professors.Where(s => s.DeptID == deptID)
+        //        .Select(s => new { s.ProfID, s.ProfName })
+        //        .ToList();
+        //    return Json(result,JsonRequestBehavior.AllowGet);
+        //}
+
+
         [HttpGet]
-        public JsonResult DepartmentProfessors(int deptID)
+        public JsonResult DepartmentProfessors()
         {
-            var result = DB.Professors.Where(s => s.DeptID == deptID)
-                .Select(s => new { s.ProfID, s.ProfName })
-                .ToList();
-            return Json(result,JsonRequestBehavior.AllowGet);
+            var result = DB.Departments.Include(s => s.Professors).Select(s => new
+            {
+                DeptID = s.DeptID,
+                DeptName = s.DeptName,
+                Professors = s.Professors.Select(a => new { a.ProfID, a.ProfName })
+            });
+
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
